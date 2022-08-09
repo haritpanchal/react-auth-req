@@ -1,23 +1,34 @@
-import { Switch, Route } from "react-router-dom";
+import { useContext } from "react";
+import { Switch, Route, Redirect } from "react-router-dom";
 
 import Layout from "./components/Layout/Layout";
 import UserProfile from "./components/Profile/UserProfile";
 import AuthPage from "./pages/AuthPage";
 import HomePage from "./pages/HomePage";
+import AuthContext from "./store/auth-context";
 require("dotenv").config();
 
 function App() {
+  const authCtx = useContext(AuthContext);
+  const isUserLoggedIn = authCtx.isLoggedIn;
   return (
     <Layout>
       <Switch>
         <Route path="/" exact>
           <HomePage />
         </Route>
-        <Route path="/auth">
-          <AuthPage />
-        </Route>
-        <Route path="/profile">
-          <UserProfile />
+        {!isUserLoggedIn && (
+          <Route path="/auth">
+            <AuthPage />
+          </Route>
+        )}
+        {isUserLoggedIn && (
+          <Route path="/profile">
+            <UserProfile />
+          </Route>
+        )}
+        <Route path="*">
+          <Redirect to="/" />
         </Route>
       </Switch>
     </Layout>
